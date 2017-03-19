@@ -37,6 +37,8 @@
 #include "opus_types.h"
 #include "opus_defines.h"
 
+
+
 # if !defined(__GNUC_PREREQ)
 #  if defined(__GNUC__)&&defined(__GNUC_MINOR__)
 #   define __GNUC_PREREQ(_maj,_min) \

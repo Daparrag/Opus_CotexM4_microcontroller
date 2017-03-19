@@ -106,6 +106,9 @@ extern "C" {
 # else
 #  define OPUS_INLINE
 # endif
+#elif (defined(HAVE_CMSIS))/*new_D*/
+	define OPUS_INLINE __inline
+# endif
 #else
 # define OPUS_INLINE inline
 #endif

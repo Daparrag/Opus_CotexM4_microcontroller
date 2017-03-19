@@ -25,11 +25,13 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+
 #if !defined(ARMCPU_H)
 # define ARMCPU_H
 
+
 # if defined(OPUS_ARM_MAY_HAVE_EDSP)
-#  define MAY_HAVE_EDSP(name) name ## _edsp
+#  define MAY_HAVE_EDSP(name) name ## _edsp //this "##" puts two token together in this case the tokens <name> & <_edsp>
 # else
 #  define MAY_HAVE_EDSP(name) name ## _c
 # endif
@@ -64,13 +66,22 @@
 #  define PRESUME_NEON(name) PRESUME_MEDIA(name)
 # endif
 
+
+
 # if defined(OPUS_HAVE_RTCD)
 int opus_select_arch(void);
 
-#define OPUS_ARCH_ARM_V4    (0)
-#define OPUS_ARCH_ARM_EDSP  (1)
-#define OPUS_ARCH_ARM_MEDIA (2)
-#define OPUS_ARCH_ARM_NEON  (3)
+#define OPUS_ARCH_ARM_V4    	(0)
+#define OPUS_ARCH_ARM_EDSP  	(1)
+#define OPUS_ARCH_ARM_MEDIA 	(2)
+#define OPUS_ARCH_ARM_NEON  	(3)
+# endif
+
+#	if defined(OPUS_HAVE_CORTEX_M)/*new_D*/
+int opus_select_arch(void);
+#define OPUS_ARCH_ARM_ARM6M		(4)
+#define OPUS_ARCH_ARM_ARM7M		(5)
+#define OPUS_ARCH_ARM_ARMv7E 	(6) /*include for support ARMv7E-M architecture*/
 
 # endif
 

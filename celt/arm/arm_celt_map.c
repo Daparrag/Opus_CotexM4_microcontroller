@@ -75,7 +75,7 @@ void (*const XCORR_KERNEL_IMPL[OPUS_ARCHMASK + 1])(
   xcorr_kernel_neon_fixed,       /* Neon */
 };
 
-#endif
+#endif/*FIXED_POINT && OPUS_HAVE_RTCD*/
 
 # if defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
 #  if defined(HAVE_ARM_NE10)
@@ -141,3 +141,78 @@ void (*const CLT_MDCT_BACKWARD_IMPL[OPUS_ARCHMASK+1])(const mdct_lookup *l,
 # endif /* OPUS_ARM_MAY_HAVE_NEON_INTR */
 
 #endif /* OPUS_HAVE_RTCD */
+
+#if (defined(OPUS_HAVE_CORTEX_M)) && (defined (HAVE_CMSIS))/*New_D*/
+# if defined(FIXED_POINT)
+
+opus_val32 (*const CELT_PITCH_XCORR_IMPL[OPUS_ARCHMASK+1])(const opus_val16 *,
+    const opus_val16 *, opus_val32 *, int , int) = {
+    		celt_pitch_xcorr_cortex_,	 /*Cortex_Mv6*/
+    		celt_pitch_xcorr_cortex_,	 /*Cortex_Mv7*/
+    		celt_pitch_xcorr_cortex_m7e	 /*Cortex_Mv7E*/
+};
+# else /* !FIXED_POINT */
+  void (*const CELT_PITCH_XCORR_IMPL[OPUS_ARCHMASK+1])(const opus_val16 *,
+const opus_val16 *, opus_val32 *, int, int) = {
+		celt_pitch_xcorr_cortex_,              /*Cortex_Mv6*/
+		celt_pitch_xcorr_cortex_,              /*Cortex_Mv7*/
+		celt_pitch_xcorr_float_cortex_m7e      /*Cortex_Mv7E*/
+};
+#  endif/*FIXED_POINT*/
+
+#   if defined(CUSTOM_MODES)
+int (*const OPUS_FFT_ALLOC_ARCH_IMPL[OPUS_ARCHMASK+1])(kiss_fft_state *st) = {
+     opus_fft_alloc_arch_cortex_,        /*Cortex_Mv6*/
+     opus_fft_alloc_arch_cortex_,        /*Cortex_Mv7*/
+     opus_fft_alloc_arch_cortex_m7e      /*Cortex_Mv7E*/
+  };
+
+void (*const OPUS_FFT_FREE_ARCH_IMPL[OPUS_ARCHMASK+1])(kiss_fft_state *st) = {
+   opus_fft_free_arch_cortex_,         /*Cortex_Mv6*/
+   opus_fft_free_arch_cortex_,         /*Cortex_Mv7*/
+   opus_fft_free_arm_cortex_m7e        /*Cortex_Mv7E*/
+};
+#  endif/*CUSTOM_MODES*/
+
+void (*const OPUS_FFT[OPUS_ARCHMASK+1])(const kiss_fft_state *cfg,
+                                        const kiss_fft_cpx *fin,
+                                        kiss_fft_cpx *fout) = {
+
+   opus_fft_cortex_,                   /*Cortex_Mv6*/
+   opus_fft_cortex_,                   /*Cortex_Mv7*/
+   opus_fft_cortex_m7e                 /*Cortex_Mv7E*/
+
+};
+
+void (*const OPUS_IFFT[OPUS_ARCHMASK+1])(const kiss_fft_state *cfg,
+                                         const kiss_fft_cpx *fin,
+                                         kiss_fft_cpx *fout) = {
+   opus_ifft_cortex_,                   /*Cortex_Mv6*/
+   opus_ifft_cortex_,                   /*Cortex_Mv7*/
+   opus_ifft_cortex_m7e                 /*Cortex_Mv7E*/
+};
+
+void (*const CLT_MDCT_FORWARD_IMPL[OPUS_ARCHMASK+1])(const mdct_lookup *l,
+                                                     kiss_fft_scalar *in,
+                                                     kiss_fft_scalar * OPUS_RESTRICT out,
+                                                     const opus_val16 *window,
+                                                     int overlap, int shift,
+                                                     int stride, int arch) = {
+   clt_mdct_forward_cortex_,           /*Cortex_Mv6*/
+   clt_mdct_forward_cortex_,           /*Cortex_Mv7*/
+   clt_mdct_forward_cortex_m7e         /*Cortex_Mv7E*/
+};
+
+
+void (*const CLT_MDCT_BACKWARD_IMPL[OPUS_ARCHMASK+1])(const mdct_lookup *l,
+                                                      kiss_fft_scalar *in,
+                                                      kiss_fft_scalar * OPUS_RESTRICT out,
+                                                      const opus_val16 *window,
+                                                      int overlap, int shift,
+                                                      int stride, int arch) = {
+   clt_mdct_backward_cortex_,           /*Cortex_Mv6*/
+   clt_mdct_backward_cortex_,           /*Cortex_Mv7*/
+   clt_mdct_backward_cortex_m7e         /*Cortex_Mv7E*/
+};
+
+#endif /* OPUS_HAVE_CORTEX_M */

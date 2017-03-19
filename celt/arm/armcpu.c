@@ -183,3 +183,57 @@ int opus_select_arch(void)
 }
 
 #endif
+
+#ifdef OPUS_HAVE_CORTEX_M /*New_D*/
+/*This section includes the capabilities for the CORTEX_M family Micro-Processors*/
+#ifdef HAVE_CMSIS
+#define OPUS_CPU_ARM_V6M_FLAG	(1 << OPUS_ARCH_ARM_ARM6M)/*include for support ARM_ARM6M architecture*/
+#define OPUS_CPU_ARM_V7M_FLAG	(1 << OPUS_ARCH_ARM_ARM7M)/*include for support ARMv7M architecture*/
+#define OPUS_CPU_ARM_V7E_FLAG  	(1 << OPUS_ARCH_ARM_ARMv7E)/*include for support ARMv7E-M architecture*/
+
+static OPUS_INLINE  opus_uint32 opus_cpu_capabilities(void)
+{
+	/*this function evaluate the capabilities for Cortex-M family such as
+		*EDSP: used for DSP-Capabilities
+		*EDSP: MEDIA additional features included for high performance processors */
+
+  opus_uint32 flags;
+  flags=0;
+  #if defined(__ARM_ARCH_6M__)
+   flags|=OPUS_CPU_ARM_V6M_FLAG;
+  #elif defined(__ARM_ARCH_7M__)
+	flags|=OPUS_CPU_ARM_V7M_FLAG;
+  #elif defined(__ARM_ARCH_7EM__)
+  flags|=OPUS_CPU_ARM_V7E_FLAG;
+  #else
+  #endif
+return flags;
+}
+#else
+/*The library the library CMSIS-CORE is used,
+ * In order to know which CORTEX-M architecture is
+ * configured for this aplication
+ */
+ # error "Configured to use Cortex-M family but no CPU detection method available for " \
+   "your platform."	"please check if your CPU is supported by HAVE_CMSIS library or \
+   Reconfigure with --disable-rtcd  --disable-cortex-m (or send patches)."
+#endif /*HAVE_CMSIS*/
+int opus_select_arch(void)
+{
+	opus_uint32 flags = opus_cpu_capabilities();
+	  int arch = 0;
+
+	if((flags & OPUS_CPU_ARM_V6M_FLAG)) {
+    /* Asserts ensure arch values are sequential */
+		celt_assert(arch == OPUS_ARCH_ARM_ARM6M);
+    return arch;
+  }else if((flags & OPUS_CPU_ARM_V7M_FLAG)){
+	   celt_assert(arch == OPUS_ARCH_ARM_ARM7M);
+	return arch;
+  }else if((flags & OPUS_CPU_ARM_V7E_FLAG)){
+	  celt_assert(arch == OPUS_ARCH_ARM_ARMv7E);
+	return arch;
+  }
+  return arch;
+}
+#endif /*OPUS_HAVE_CORTEX_M*/
