@@ -26,6 +26,10 @@
 #ifndef KISS_FFT_ARMv4_H
 #define KISS_FFT_ARMv4_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #if !defined(KISS_FFT_GUTS_H)
 #error "This file should only be included from _kiss_fft_guts.h"
 #endif

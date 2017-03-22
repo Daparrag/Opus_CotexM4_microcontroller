@@ -78,7 +78,7 @@ extern "C" {
 #endif
 
 # if !defined(OPUS_GNUC_PREREQ)
-#  if defined(__GNUC__)&&defined(__GNUC_MINOR__)
+#  if defined(__GNUC__)&& defined(__GNUC_MINOR__)
 #   define OPUS_GNUC_PREREQ(_maj,_min) \
  ((__GNUC__<<16)+__GNUC_MINOR__>=((_maj)<<16)+(_min))
 #  else
@@ -108,7 +108,6 @@ extern "C" {
 # endif
 #elif (defined(HAVE_CMSIS))/*new_D*/
 	define OPUS_INLINE __inline
-# endif
 #else
 # define OPUS_INLINE inline
 #endif

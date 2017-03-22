@@ -26,6 +26,9 @@
 #ifndef KISS_FFT_ARMv5E_H
 #define KISS_FFT_ARMv5E_H
 
+#ifdef HAVE_CONFIG_H /*new_D*/
+#include "config.h"
+#endif
 #if !defined(KISS_FFT_GUTS_H)
 #error "This file should only be included from _kiss_fft_guts.h"
 #endif

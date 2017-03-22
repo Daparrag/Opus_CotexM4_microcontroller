@@ -28,6 +28,10 @@
 #if !defined(PITCH_ARM_H)
 # define PITCH_ARM_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 # include "armcpu.h"
 
 # if defined(FIXED_POINT)

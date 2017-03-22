@@ -26,6 +26,10 @@
 #ifndef KISS_FFT_GUTS_H
 #define KISS_FFT_GUTS_H
 
+#ifdef HAVE_CONFIG_H /*new_D*/
+#include "config.h"
+#endif
+
 #define MIN(a,b) ((a)<(b) ? (a):(b))
 #define MAX(a,b) ((a)>(b) ? (a):(b))
 
@@ -57,36 +61,36 @@
 
 #   define S_MUL(a,b) MULT16_32_Q15(b, a)
 
-#   define C_MUL(m,a,b) \
+#   define C_MUL(m,a,b) \/*implementation of the complex multiplication*/
       do{ (m).r = SUB32_ovflw(S_MUL((a).r,(b).r) , S_MUL((a).i,(b).i)); \
           (m).i = ADD32_ovflw(S_MUL((a).r,(b).i) , S_MUL((a).i,(b).r)); }while(0)
 
-#   define C_MULC(m,a,b) \
+#   define C_MULC(m,a,b) \/*implementation of the complex conjugate multiplication*/
       do{ (m).r = ADD32_ovflw(S_MUL((a).r,(b).r) , S_MUL((a).i,(b).i)); \
           (m).i = SUB32_ovflw(S_MUL((a).i,(b).r) , S_MUL((a).r,(b).i)); }while(0)
 
-#   define C_MULBYSCALAR( c, s ) \
+#   define C_MULBYSCALAR( c, s ) \/*implementation of the Complex Scalar Multiplication*/
       do{ (c).r =  S_MUL( (c).r , s ) ;\
           (c).i =  S_MUL( (c).i , s ) ; }while(0)
 
-#   define DIVSCALAR(x,k) \
+#   define DIVSCALAR(x,k) \/*Scalar Division*/
         (x) = S_MUL(  x, (TWID_MAX-((k)>>1))/(k)+1 )
 
-#   define C_FIXDIV(c,div) \
+#   define C_FIXDIV(c,div) \/*fixed point division*/
         do {    DIVSCALAR( (c).r , div);  \
                 DIVSCALAR( (c).i  , div); }while (0)
 
-#define  C_ADD( res, a,b)\
+#define  C_ADD( res, a,b)\/*complex addition*/
     do {(res).r=ADD32_ovflw((a).r,(b).r);  (res).i=ADD32_ovflw((a).i,(b).i); \
     }while(0)
-#define  C_SUB( res, a,b)\
+#define  C_SUB( res, a,b)\/*complex Substraction*/
     do {(res).r=SUB32_ovflw((a).r,(b).r);  (res).i=SUB32_ovflw((a).i,(b).i); \
     }while(0)
-#define C_ADDTO( res , a)\
+#define C_ADDTO( res , a)\/*complex accumulate addition*/
     do {(res).r = ADD32_ovflw((res).r, (a).r);  (res).i = ADD32_ovflw((res).i,(a).i);\
     }while(0)
 
-#define C_SUBFROM( res , a)\
+#define C_SUBFROM( res , a)\/*complex accumulate substraction*/
     do {(res).r = ADD32_ovflw((res).r,(a).r);  (res).i = SUB32_ovflw((res).i,(a).i); \
     }while(0)
 
@@ -94,9 +98,14 @@
 #include "arm/kiss_fft_armv4.h"
 #endif
 
-#if defined(OPUS_ARM_INLINE_EDSP)
+#if defined(OPUS_ARM_INLINE_EDSP) && !defined(OPUS_HAVE_CORTEX_M)
 #include "arm/kiss_fft_armv5e.h"
 #endif
+
+#if defined(OPUS_HAVE_CORTEX_M)/*New_D*/
+#include "arm/kiss_fft_armv7e.h"
+#endif
+
 #if defined(MIPSr1_ASM)
 #include "mips/kiss_fft_mipsr1.h"
 #endif

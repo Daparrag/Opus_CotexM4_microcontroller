@@ -34,4 +34,6 @@ OPUS_ARM_MAY_HAVE_MEDIA * @OPUS_ARM_MAY_HAVE_MEDIA@
 ; Set the following to 1 if we have NEON (some ARMv7)
 OPUS_ARM_MAY_HAVE_NEON  * @OPUS_ARM_MAY_HAVE_NEON@
 
+; Set the following to 1 if we have CORTEX_M4  (some ARMv7E-M)/*New_D*/
+OPUS_HAVE_CORTEX_M  * @OPUS_HAVE_CORTEX_M@
 END

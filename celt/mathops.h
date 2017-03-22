@@ -34,6 +34,10 @@
 #ifndef MATHOPS_H
 #define MATHOPS_H
 
+#ifdef HAVE_CONFIG_H /*new_D*/
+#include "config.h"
+#endif
+
 #include "arch.h"
 #include "entcode.h"
 #include "os_support.h"

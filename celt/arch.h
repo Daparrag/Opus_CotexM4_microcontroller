@@ -34,6 +34,11 @@
 #ifndef ARCH_H
 #define ARCH_H
 
+#ifdef HAVE_CONFIG_H /*new_D*/
+#include "config.h"
+#endif
+
+
 #include "opus_types.h"
 #include "opus_defines.h"
 
@@ -145,8 +150,8 @@ static OPUS_INLINE opus_int16 SAT16(opus_int32 x) {
 #include "arm/fixed_arm64.h"
 #elif OPUS_ARM_INLINE_EDSP
 #include "arm/fixed_armv5e.h"
-#elif defined (OPUS_ARM_INLINE_ASM)
-#include "arm/fixed_armv4.h"
+#elif defined (OPUS_ARM_INLINE_ASM) || defined(OPUS_HAVE_CORTEX_M)/*new_D*/
+#include "arm/fixed_armv7e.h"
 #elif defined (BFIN_ASM)
 #include "fixed_bfin.h"
 #elif defined (TI_C5X_ASM)
