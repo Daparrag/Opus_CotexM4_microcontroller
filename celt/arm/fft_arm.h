@@ -1,5 +1,5 @@
 /* Copyright (c) 2015 Xiph.Org Foundation
-   Written by Viswanath Puttagunta */
+   Written by  */
 /**
    @file fft_arm.h
    @brief ARM Neon Intrinsic optimizations for fft using NE10 library
@@ -65,7 +65,29 @@ void opus_ifft_neon(const kiss_fft_state *st,
    ((void)(arch), opus_ifft_neon(_st, _fin, _fout))
 
 #endif /* OPUS_HAVE_RTCD */
-
 #endif /* HAVE_ARM_NE10 */
 
+#if defined(USE_CORTEX_M4)  && defined(USE_CORTEX_M4_FFT)
+
+int opus_fft_alloc_armv7e(kiss_fft_state *st);
+void opus_fft_free_armv7e(kiss_fft_state *st);
+void opus_fft_armv7e (const kiss_fft_state *st,
+        			  const kiss_fft_cpx *fin,
+					  kiss_fft_cpx *fout);
+void opus_ifft_armv7e(const kiss_fft_state *st,
+		  	  	  	  const kiss_fft_cpx *fin,
+					  kiss_fft_cpx *fout);
+#define OVERRIDE_OPUS_FFT (1)
+#define opus_fft_alloc_arch(_st, arch) \
+   ((void)(arch), opus_fft_alloc_armv7e(_st))
+
+#define opus_fft_free_arch(_st, arch) \
+   ((void)(arch), opus_fft_free_armv7e(_st))
+
+#define opus_fft(_st, _fin, _fout, arch) \
+   ((void)(arch), opus_fft_armv7e(_st, _fin, _fout))
+
+#define opus_ifft(_st, _fin, _fout, arch) \
+   ((void)(arch), opus_ifft_armv7e(_st, _fin, _fout))
+#endif
 #endif

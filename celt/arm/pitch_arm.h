@@ -34,6 +34,7 @@
 
 # include "armcpu.h"
 
+
 # if defined(FIXED_POINT)
 
 #  if defined(OPUS_ARM_MAY_HAVE_NEON)
@@ -45,9 +46,16 @@ opus_val32 celt_pitch_xcorr_neon(const opus_val16 *_x, const opus_val16 *_y,
 #   define celt_pitch_xcorr_media MAY_HAVE_EDSP(celt_pitch_xcorr)
 #  endif
 
-#  if defined(OPUS_ARM_MAY_HAVE_EDSP)
+#  if defined(OPUS_ARM_MAY_HAVE_EDSP) || defined(USE_CORTEX_M4) /*new_D*/
 opus_val32 celt_pitch_xcorr_edsp(const opus_val16 *_x, const opus_val16 *_y,
     opus_val32 *xcorr, int len, int max_pitch);
+extern opus_val32
+(*const CELT_PITCH_XCORR_IMPL[OPUS_ARCHMASK+1])(const opus_val16 *,
+      const opus_val16 *, opus_val32 *, int, int);
+#   define OVERRIDE_PITCH_XCORR (1)
+#   define celt_pitch_xcorr(_x, _y, xcorr, len, max_pitch, arch) \
+  ((*CELT_PITCH_XCORR_IMPL[(arch)&OPUS_ARCHMASK])(_x, _y, \
+        xcorr, len, max_pitch))
 #  endif
 
 #  if defined(OPUS_HAVE_RTCD) && \

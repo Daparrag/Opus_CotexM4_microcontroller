@@ -34,6 +34,7 @@
 #if defined(OPUS_HAVE_RTCD) && \
   (defined(OPUS_ARM_ASM) || defined(OPUS_ARM_MAY_HAVE_NEON_INTR))
 #include "arm/armcpu.h"
+
 /* We currently support 4 ARM variants:
  * arch[0] -> ARMv4
  * arch[1] -> ARMv5E
@@ -46,6 +47,7 @@
   (defined(OPUS_X86_MAY_HAVE_SSE2) && !defined(OPUS_X86_PRESUME_SSE2)) || \
   (defined(OPUS_X86_MAY_HAVE_SSE4_1) && !defined(OPUS_X86_PRESUME_SSE4_1)) || \
   (defined(OPUS_X86_MAY_HAVE_AVX) && !defined(OPUS_X86_PRESUME_AVX))
+
 #include "x86/x86cpu.h"
 /* We currently support 5 x86 variants:
  * arch[0] -> non-sse
@@ -56,19 +58,17 @@
  */
 #define OPUS_ARCHMASK 7
 int opus_select_arch(void);
-#elif defined(OPUS_HAVE_CORTEX_M) && defined(HAVE_CMSIS)/*New_D*/
+
+#elif defined(USE_CORTEX_M4)
 #include "arm/armcpu.h"
-/* Include support for CORTEX-M currently support 3 platform:
- * arch[0] -> OPUS_ARCH_ARM_ARM6M
- * arch[1] -> OPUS_ARCH_ARM_ARM7M
- * arch[2] -> OPUS_ARCH_ARM_ARMv7E
- */
-#define OPUS_ARCHMASK 3
-int opus_select_arch(void);
+#define OPUS_ARCHMASK 1
+
 #else
 #define OPUS_ARCHMASK 0
+
 static OPUS_INLINE int opus_select_arch(void)
 {
   return 0;
 }
-#endif/*CPU_SUPPORT_H*/
+#endif
+#endif

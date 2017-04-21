@@ -7,7 +7,7 @@ static OPUS_INLINE opus_val32 MULT16_32_Q16_armv7e(opus_val16 a, opus_val32 b){
 	int rd;
 	__asm__(
 		"#MULT16_32_Q16\n\t"
-		"smulwt %0, %1, %2\n\t"
+		"smulwb %0, %1, %2\n\t"
 		: "=r"(rd)
 		: "r"(b),"r"(a)
 	);
@@ -22,7 +22,7 @@ static OPUS_INLINE opus_val32 MULT16_32_Q15_armv7e(opus_val16 a, opus_val32 b){
 	int rd;
 	__asm__(
 		"#MULT16_32_Q15\n\t"
-		"smulwt %0, %1, %2\n\t"
+		"smulwb %0, %1, %2\n\t"
 		: "=r"(rd)
 		: "r"(b),"r"(a)
 	);
@@ -102,7 +102,7 @@ static OPUS_INLINE opus_val32 MULT_32_32_Q31_armv7e(opus_val32 a, opus_val32 b){
 		"#MULT_32_32_Q31\n\t"
 		"smmul %0, %1, %2\n\t"
 		: "=&r"(rd)
-		: "%r"(b), "%r"(a)
+		: "r"(b), "r"(a)
 	);
 	return rd;
 }

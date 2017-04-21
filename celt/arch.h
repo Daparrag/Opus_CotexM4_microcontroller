@@ -34,15 +34,8 @@
 #ifndef ARCH_H
 #define ARCH_H
 
-#ifdef HAVE_CONFIG_H /*new_D*/
-#include "config.h"
-#endif
-
-
 #include "opus_types.h"
 #include "opus_defines.h"
-
-
 
 # if !defined(__GNUC_PREREQ)
 #  if defined(__GNUC__)&&defined(__GNUC_MINOR__)
@@ -52,14 +45,6 @@
 #   define __GNUC_PREREQ(_maj,_min) 0
 #  endif
 # endif
-
-#if OPUS_GNUC_PREREQ(3, 0)
-#define opus_likely(x)       (__builtin_expect(!!(x), 1))
-#define opus_unlikely(x)     (__builtin_expect(!!(x), 0))
-#else
-#define opus_likely(x)       (!!(x))
-#define opus_unlikely(x)     (!!(x))
-#endif
 
 #define CELT_SIG_SCALE 32768.f
 
@@ -93,22 +78,12 @@ static OPUS_INLINE void _celt_fatal(const char *str, const char *file, int line)
 #define UADD32(a,b) ((a)+(b))
 #define USUB32(a,b) ((a)-(b))
 
-/* Set this if opus_int64 is a native type of the CPU. */
-/* Assume that all LP64 architectures have fast 64-bit types; also x86_64
-   (which can be ILP32 for x32) and Win64 (which is LLP64). */
-#if defined(__x86_64__) || defined(__LP64__) || defined(_WIN64)
-#define OPUS_FAST_INT64 1
-#else
-#define OPUS_FAST_INT64 0
-#endif
-
 #define PRINT_MIPS(file)
 
 #ifdef FIXED_POINT
 
 typedef opus_int16 opus_val16;
 typedef opus_int32 opus_val32;
-typedef opus_int64 opus_val64;
 
 typedef opus_val32 celt_sig;
 typedef opus_val16 celt_norm;
@@ -117,9 +92,6 @@ typedef opus_val32 celt_ener;
 #define Q15ONE 32767
 
 #define SIG_SHIFT 12
-/* Safe saturation value for 32-bit signals. Should be less than
-   2^31*(1-0.85) to avoid blowing up on DC at deemphasis.*/
-#define SIG_SAT (300000000)
 
 #define NORM_SCALING 16384
 
@@ -146,12 +118,10 @@ static OPUS_INLINE opus_int16 SAT16(opus_int32 x) {
 
 #include "fixed_generic.h"
 
-#ifdef OPUS_ARM_PRESUME_AARCH64_NEON_INTR
-#include "arm/fixed_arm64.h"
-#elif OPUS_ARM_INLINE_EDSP
+#ifdef OPUS_ARM_INLINE_EDSP
 #include "arm/fixed_armv5e.h"
-#elif defined (OPUS_ARM_INLINE_ASM) || defined(OPUS_HAVE_CORTEX_M)/*new_D*/
-#include "arm/fixed_armv7e.h"
+#elif defined (OPUS_ARM_INLINE_ASM) || ! defined(USE_CORTEX_M4)
+#include "arm/fixed_armv4.h"
 #elif defined (BFIN_ASM)
 #include "fixed_bfin.h"
 #elif defined (TI_C5X_ASM)
@@ -160,13 +130,16 @@ static OPUS_INLINE opus_int16 SAT16(opus_int32 x) {
 #include "fixed_c6x.h"
 #endif
 
+#if defined(USE_CORTEX_M4)
+#include "arm/fixed_armv7e.h"
+#endif
+
 #endif
 
 #else /* FIXED_POINT */
 
 typedef float opus_val16;
 typedef float opus_val32;
-typedef float opus_val64;
 
 typedef float celt_sig;
 typedef float celt_norm;
@@ -206,7 +179,6 @@ static OPUS_INLINE int celt_isnan(float x)
 
 #define NEG16(x) (-(x))
 #define NEG32(x) (-(x))
-#define NEG32_ovflw(x) (-(x))
 #define EXTRACT16(x) (x)
 #define EXTEND32(x) (x)
 #define SHR16(a,shift) (a)
@@ -223,7 +195,6 @@ static OPUS_INLINE int celt_isnan(float x)
 #define SATURATE16(x)   (x)
 
 #define ROUND16(a,shift)  (a)
-#define SROUND16(a,shift) (a)
 #define HALF16(x)       (.5f*(x))
 #define HALF32(x)       (.5f*(x))
 
@@ -231,8 +202,6 @@ static OPUS_INLINE int celt_isnan(float x)
 #define SUB16(a,b) ((a)-(b))
 #define ADD32(a,b) ((a)+(b))
 #define SUB32(a,b) ((a)-(b))
-#define ADD32_ovflw(a,b) ((a)+(b))
-#define SUB32_ovflw(a,b) ((a)-(b))
 #define MULT16_16_16(a,b)     ((a)*(b))
 #define MULT16_16(a,b)     ((opus_val32)(a)*(opus_val32)(b))
 #define MAC16_16(c,a,b)     ((c)+(opus_val32)(a)*(opus_val32)(b))
@@ -267,9 +236,9 @@ static OPUS_INLINE int celt_isnan(float x)
 
 #ifndef GLOBAL_STACK_SIZE
 #ifdef FIXED_POINT
-#define GLOBAL_STACK_SIZE 120000
+#define GLOBAL_STACK_SIZE 100000
 #else
-#define GLOBAL_STACK_SIZE 120000
+#define GLOBAL_STACK_SIZE 100000
 #endif
 #endif
 

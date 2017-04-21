@@ -28,11 +28,6 @@
 #ifndef DUMP_MODE_ARCH_H
 #define DUMP_MODE_ARCH_H
 
-#ifdef HAVE_CONFIG_H /*new_D*/
-#include "config.h"
-#endif
-
-
 void dump_modes_arch_init();
 void dump_mode_arch(CELTMode *mode);
 void dump_modes_arch_finalize();

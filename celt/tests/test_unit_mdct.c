@@ -59,6 +59,10 @@
 #   include "arm/celt_ne10_mdct.c"
 #  endif
 # endif
+#  if defined(USE_CORTEX_M4)
+#   include "arm/celt_ne10_fft.c"
+#   include "arm/celt_ne10_mdct.c"
+#  endif
 # include "arm/arm_celt_map.c"
 #endif
 

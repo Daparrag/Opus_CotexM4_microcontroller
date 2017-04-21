@@ -57,23 +57,17 @@ typedef struct {
    float noisiness;
    float activity;
    float music_prob;
-   float vad_prob;
-   int   bandwidth;
-   float activity_probability;
-} AnalysisInfo;
-
-typedef struct {
-   int signalType;
-   int offset;
-} SILKInfo;
+   int        bandwidth;
+}AnalysisInfo;
 
 #define __celt_check_mode_ptr_ptr(ptr) ((ptr) + ((ptr) - (const CELTMode**)(ptr)))
 
 #define __celt_check_analysis_ptr(ptr) ((ptr) + ((ptr) - (const AnalysisInfo*)(ptr)))
 
-#define __celt_check_silkinfo_ptr(ptr) ((ptr) + ((ptr) - (const SILKInfo*)(ptr)))
-
 /* Encoder/decoder Requests */
+
+/* Expose this option again when variable framesize actually works */
+#define OPUS_FRAMESIZE_VARIABLE              5010 /**< Optimize the frame size dynamically */
 
 
 #define CELT_SET_PREDICTION_REQUEST    10002
@@ -121,9 +115,6 @@ typedef struct {
 
 #define OPUS_SET_ENERGY_MASK_REQUEST    10026
 #define OPUS_SET_ENERGY_MASK(x) OPUS_SET_ENERGY_MASK_REQUEST, __opus_check_val16_ptr(x)
-
-#define CELT_SET_SILK_INFO_REQUEST    10028
-#define CELT_SET_SILK_INFO(x) CELT_SET_SILK_INFO_REQUEST, __celt_check_silkinfo_ptr(x)
 
 /* Encoder stuff */
 
@@ -218,7 +209,7 @@ void comb_filter_const_c(opus_val32 *y, opus_val32 *x, int T, int N,
 #endif
 
 #ifndef OVERRIDE_COMB_FILTER_CONST
-# define comb_filter_const(y, x, T, N, g10, g11, g12, arch) \
+# define comb_filter_const(y, x, T, N, g10, g11, g12, arch)		\
     ((void)(arch),comb_filter_const_c(y, x, T, N, g10, g11, g12))
 #endif
 

@@ -9,6 +9,11 @@
 #include "static_modes_fixed_arm_ne10.h"
 #endif
 
+#if defined(USE_CORTEX_M4)
+#define OVERRIDE_FFT 1
+#include "static_modes_fixed_armv7e.h"
+#endif
+
 #ifndef DEF_WINDOW120
 #define DEF_WINDOW120
 static const opus_val16 window120[120] = {

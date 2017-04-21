@@ -36,7 +36,6 @@ clean-local:
 	$(RM) -r latex
 	$(RM) -r man
 	$(RM) doxygen-build.stamp
-	$(RM) doxygen_sqlite3.db
 
 uninstall-local:
 	$(RM) -r $(DESTDIR)$(docdir)/html

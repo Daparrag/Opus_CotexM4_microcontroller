@@ -45,6 +45,7 @@
 #include "opus_defines.h"
 #include "kiss_fft.h"
 #include "arch.h"
+#include "cpu_support.h"
 
 typedef struct {
    int n;
@@ -54,6 +55,11 @@ typedef struct {
 } mdct_lookup;
 
 #if defined(HAVE_ARM_NE10)
+#include "arm/mdct_arm.h"
+#endif
+
+
+#if defined(USE_CORTEX_M4)
 #include "arm/mdct_arm.h"
 #endif
 

@@ -34,7 +34,6 @@
 
 # if defined(OPUS_X86_MAY_HAVE_SSE4_1)
 
-#if 0 /* FIXME: SSE disabled until silk_VQ_WMat_EC_sse4_1() gets updated. */
 #  define OVERRIDE_silk_VQ_WMat_EC
 
 void silk_VQ_WMat_EC_sse4_1(
@@ -80,9 +79,7 @@ extern void (*const SILK_VQ_WMAT_EC_IMPL[OPUS_ARCHMASK + 1])(
                           mu_Q9, max_gain_Q7, L))
 
 #endif
-#endif
 
-#if 0 /* FIXME: SSE disabled until the NSQ code gets updated. */
 #  define OVERRIDE_silk_NSQ
 
 void silk_NSQ_sse4_1(
@@ -190,7 +187,6 @@ extern void (*const SILK_NSQ_DEL_DEC_IMPL[OPUS_ARCHMASK + 1])(
                            HarmShapeGain_Q14, Tilt_Q14, LF_shp_Q14, Gains_Q16, pitchL, Lambda_Q10, LTP_scale_Q14))
 
 #endif
-#endif
 
 void silk_noise_shape_quantizer(
     silk_nsq_state      *NSQ,                   /* I/O  NSQ state                       */
@@ -211,8 +207,7 @@ void silk_noise_shape_quantizer(
     opus_int            offset_Q10,             /* I                                    */
     opus_int            length,                 /* I    Input length                    */
     opus_int            shapingLPCOrder,        /* I    Noise shaping AR filter order   */
-    opus_int            predictLPCOrder,        /* I    Prediction filter order         */
-    int                 arch                    /* I    Architecture                    */
+    opus_int            predictLPCOrder         /* I    Prediction filter order         */
 );
 
 /**************************/
@@ -241,6 +236,39 @@ opus_int silk_VAD_GetSA_Q8_sse4_1(
 extern opus_int (*const SILK_VAD_GETSA_Q8_IMPL[OPUS_ARCHMASK + 1])(
      silk_encoder_state *psEnC,
      const opus_int16   pIn[]);
+
+#  define OVERRIDE_silk_warped_LPC_analysis_filter_FIX
+
+#endif
+
+void silk_warped_LPC_analysis_filter_FIX_sse4_1(
+          opus_int32            state[],                    /* I/O  State [order + 1]                   */
+          opus_int32            res_Q2[],                   /* O    Residual signal [length]            */
+    const opus_int16            coef_Q13[],                 /* I    Coefficients [order]                */
+    const opus_int16            input[],                    /* I    Input signal [length]               */
+    const opus_int16            lambda_Q16,                 /* I    Warping factor                      */
+    const opus_int              length,                     /* I    Length of input signal              */
+    const opus_int              order                       /* I    Filter order (even)                 */
+);
+
+#if defined(OPUS_X86_PRESUME_SSE4_1)
+#define silk_warped_LPC_analysis_filter_FIX(state, res_Q2, coef_Q13, input, lambda_Q16, length, order, arch) \
+    ((void)(arch),silk_warped_LPC_analysis_filter_FIX_c(state, res_Q2, coef_Q13, input, lambda_Q16, length, order))
+
+#else
+
+extern void (*const SILK_WARPED_LPC_ANALYSIS_FILTER_FIX_IMPL[OPUS_ARCHMASK + 1])(
+          opus_int32            state[],                    /* I/O  State [order + 1]                   */
+          opus_int32            res_Q2[],                   /* O    Residual signal [length]            */
+    const opus_int16            coef_Q13[],                 /* I    Coefficients [order]                */
+    const opus_int16            input[],                    /* I    Input signal [length]               */
+    const opus_int16            lambda_Q16,                 /* I    Warping factor                      */
+    const opus_int              length,                     /* I    Length of input signal              */
+    const opus_int              order                       /* I    Filter order (even)                 */
+);
+
+#  define silk_warped_LPC_analysis_filter_FIX(state, res_Q2, coef_Q13, input, lambda_Q16, length, order, arch) \
+    ((*SILK_WARPED_LPC_ANALYSIS_FILTER_FIX_IMPL[(arch) & OPUS_ARCHMASK])(state, res_Q2, coef_Q13, input, lambda_Q16, length, order))
 
 #endif
 

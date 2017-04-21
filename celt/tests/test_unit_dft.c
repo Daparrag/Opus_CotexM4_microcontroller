@@ -45,9 +45,6 @@
 #include "mathops.c"
 #include "entcode.c"
 
-
-
-
 #if defined(OPUS_X86_MAY_HAVE_SSE2) || defined(OPUS_X86_MAY_HAVE_SSE4_1)
 # include "x86/x86cpu.c"
 #elif defined(OPUS_ARM_ASM) || defined(OPUS_ARM_MAY_HAVE_NEON_INTR)
@@ -62,11 +59,10 @@
 #   include "arm/celt_ne10_mdct.c"
 #  endif
 # endif
-# include "arm/arm_celt_map.c"
-#elif defined(OPUS_HAVE_CORTEX_M)/*New_D*/
-# include "arm/armcpu.c"
-//# include "arm/celt_cortex_m_fft.c"
-//# include "arm_cortex_m/celt_cortex_m_mdct.c"
+#  if defined(USE_CORTEX_M4)
+#   include "arm/celt_ne10_fft.c"
+#   include "arm/celt_ne10_mdct.c"
+#  endif
 # include "arm/arm_celt_map.c"
 #endif
 
