@@ -53,4 +53,6 @@ static OPUS_INLINE  opus_val32 EC_CLZ_armv7e (opus_val32 _x)
 
 
 
+
+
 #endif /* CELT_ARMV7E_INTR_H_ */

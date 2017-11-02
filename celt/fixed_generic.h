@@ -79,11 +79,15 @@
 #define VSHR32(a, shift) (((shift)>0) ? SHR32(a, shift) : SHL32(a, -(shift)))
 
 /** "RAW" macros, should not be used outside of this header file */
+/**Arithmetic shift-right any number */
 #define SHR(a,shift) ((a) >> (shift))
+/**Arithmetic left-right any number */
 #define SHL(a,shift) SHL32(a,shift)
+/** 32-bit arithmetic shift right with rounding-to-1 */
 #define PSHR(a,shift) (SHR((a)+((EXTEND32(1)<<((shift))>>1)),shift))
+/** 32-bit saturation operations at any bit */
 #define SATURATE(x,a) (((x)>(a) ? (a) : (x)<-(a) ? -(a) : (x)))
-
+/** 32-bit saturation operations at  16 bits */
 #define SATURATE16(x) (EXTRACT16((x)>32767 ? 32767 : (x)<-32768 ? -32768 : (x)))
 
 /** Shift by a and round-to-neareast 32-bit value. Result is a 16-bit value */
