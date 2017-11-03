@@ -2,6 +2,46 @@
 #define FIXED_ARMv7E_H
 
 
+
+/**
+  * @brief  signed add 16
+  * @param  opus_val16 val1: first operand for the addition.
+  * @param  opus_val16 val2: second operand for the addition.
+  * @retval opus_val16 res : res[15:0]= val1[15:0] + val2[15:0]
+  */
+#undef ADD16
+static OPUS_INLINE  opus_val16 ADD16_armv7e (opus_val16 val1, opus_val16 val2){
+	opus_val16 res;
+	__asm__(
+			"#SADD16\n\t"
+			"sadd16 %0, %1, %2\n\t"
+			: "=r"(res)
+			: "r"(val1),"r"(val2)
+			);
+	return res;
+}
+#define ADD16(a,b)	(ADD16_armv7e(a,b))
+
+
+/**
+  * @brief  signed sub 16
+  * @param  opus_val16 val1: first operand for the subtraction.
+  * @param  opus_val16 val2: second operand for the subtraction.
+  * @retval opus_val16 res : res[15:0]= val1[15:0] - val2[15:0]
+  */
+#undef SUB16
+static OPUS_INLINE  opus_val16 SUB16_armv7e (opus_val16 val1, opus_val16 val2){
+	opus_val16 res;
+	__asm__(
+			"#SSUB16\n\t"
+			"ssub16 %0, %1, %2\n\t"
+			: "=r"(res)
+			: "r"(val1),"r"(val2)
+	);
+	return res;
+}
+#define SUB16(a,b)	(SUB16_armv7e(a,b))
+
 /** 16x16 multiplication where the result fits in 16 bits */
 #undef MULT16_16
 static OPUS_INLINE opus_val32 MULT16_16_armv7e (opus_val32 a, opus_val32 b){
