@@ -31,7 +31,14 @@
 #endif
 
 #include "kiss_fft_armv5e.h"
+/*Complex Multiplication*/
+void C_MUL32_armv7e(opus_val32 * in_cplxA, opus_val32 * in_cplxB, opus_val32 out_dest, opus_val32 nsamples){
 
+}
+/*Complex Conjugates input vector*/
+void cxplex_conj_vector_armv7e(opus_val32 * in_cplxA,opus_val32 * dest_vect,opus_val32 nsamples){
+
+}
 
 
 

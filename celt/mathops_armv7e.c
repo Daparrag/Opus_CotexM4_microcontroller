@@ -81,6 +81,8 @@ void scale16_vect_armv7e(opus_val16 * in, float scale,opus_val16 * out ,opus_val
 	 }
 }
 
+void
+
 /* FIXME: It is necessary to complete this file*/
 
 #ifdef FIXED_POINT
