@@ -36,7 +36,7 @@ void C_MUL32_armv7e(opus_val32 * in_cplxA, opus_val32 * in_cplxB, opus_val32 out
 
 }
 /*Complex Conjugates input vector*/
-void cxplex_conj_vector_armv7e(opus_val32 * in_cplxA,opus_val32 * dest_vect,opus_val32 nsamples){
+void CPLX_CONJ_armv7e(opus_val32 * in_cplxA,opus_val32 * dest_vect,opus_val32 nsamples){
 
 }
 
