@@ -31,6 +31,56 @@ return (unsigned) out;
 
 }
 
+
+void scale16_vect_armv7e(opus_val16 * in, float scale,opus_val16 * out ,opus_val32 in_length){
+
+	opus_val16 tmp1, tmp2, tmp3, tmp4;
+	uint32_t blkCnt = in_length >> 2u;
+	/*loop unrolling*/
+
+	while(blkCnt > 0u){
+		/*C= A * scale*/
+		/*Scale The input and then store the results in the destination buffer.*/
+		/*read input samples from source.*/
+		tmp1=*in;
+		tmp2=*(in+1);
+		/*Multiply for and scalar factor.*/
+		tmp1 = tmp1 * scale;
+		/* read input sample from source */
+		tmp3 = *(in+2);
+		/*Multiply for and scalar factor.*/
+		tmp2 = tmp2 * scale;
+		/* read input sample from source */
+		tmp4 = *(in+3);
+		/* multiply with scaling factor */
+		tmp3 = tmp3 * scale;
+		tmp4 = tmp4 * scale;
+		/* store result in the destination */
+		*out = tmp1;
+		*(out+1) = tmp2;
+		*(out+2) = tmp3;
+		*(out+3) = tmp4;
+
+		/* update pointers to process next samples */
+		in+=4;
+		out+=4;
+		blkCnt--;
+	}
+
+	/*if the block is not multiple of 4 compute the remaining samples here*/
+	/** No loop unrolling is used. */
+	 blkCnt = in_length % 0x4u;
+
+	 while(blkCnt > 0u){
+		 /* C = A * scale */
+		 /* Scale the input and then store the result in the destination buffer. */
+		 *out++ = (*in++) * scale;
+		 /* Decrement the loop counter */
+		 blkCnt--;
+
+	 }
+}
+
 /* FIXME: It is necessary to complete this file*/
 
 
