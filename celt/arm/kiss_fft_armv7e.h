@@ -41,5 +41,71 @@ void CPLX_CONJ_armv7e(opus_val32 * in_cplxA,opus_val32 * dest_vect,opus_val32 ns
 }
 
 
+static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
+                     int m,
+                     int N)
+{
+
+	kiss_fft_cpx * Fout2;
+	opus_uint32 blkCnt; /*loop unrolling*/
+
+   int i;
+   (void)m;
+#ifdef CUSTOM_MODES
+      if (m==1)
+   {
+      celt_assert(m==1);
+      blkCnt = N >> 1 u;
+      kiss_fft_scalar acc1, acc2, acc3, acc4;
+      kiss_fft_scalar * OPUS_RESTRICT tmp1;
+      kiss_fft_scalar * OPUS_RESTRICT tmp2;
+      kiss_fft_scalar * OP    tmp3;
+      kiss_fft_scalar * OPUS_RESTRICT tmp4;
+      while(blkCnt > 0u){
+      	tmp1 = (kiss_fft_scalar *)Fout; 	/*Fout[2i].r*/
+      	tmp2 = (kiss_fft_scalar *)Fout+1; 	/*Fout[2i+1].r*/
+      	tmp3 = tmp1 + 1; 	   				/*Fout[2i].i*/
+      	acc1 = *tmp1 + *tmp2;  				/*Fout[2i].r + Fout[2i+1].r*/
+      	tmp4 = tmp2 + 1;       				/*Fout[2i+1].i*/
+      	acc2 = *tmp1 - *tmp2;  				/*Fout[2i].r - Fout[2i+1].r*/
+      	*tmp1 = acc1; 		   				/*Fout[2i].r = Fout[2i].r + Fout[2i+1].r*/
+      	*tmp2 = acc2; 		   				/*Fout[2i+1].r = Fout[2i].r - Fout[2i+1].r*/
+      	acc3  = *tmp3 + *tmp4; 				/*Fout[2i].i + Fout[2i+1].i*/
+      	acc4  = *tmp3 - *tmp4; 				/*Fout[2i].i - Fout[2i+1].i*/
+      	*tmp3 = acc3; 		   				/*Fout[2i].i = Fout[2i].i + Fout[2i+1].i*/
+      	*tmp4 = acc4;						/*Fout[2i+1].i = Fout[2i].i - Fout[2i+1].i*/
+      	Fout += 2;
+      	blkCnt--;
+      }
+
+      /*if the block is not multiple of 4 compute the remaining samples here*/
+	/** No loop unrolling is used. */
+       blkCnt = N % 0x4u;
+       while(blkCnt > 0u){
+        kiss_fft_cpx t;
+         Fout2 = Fout + 1;
+         t = *Fout2;
+         C_SUB( *Fout2 ,  *Fout , t );
+         C_ADDTO( *Fout ,  t );
+         Fout += 2;
+         blkCnt--;
+       }
+
+      }else
+#endif
+      {
+          opus_val16 tw;
+          tw = QCONST16(0.7071067812f, 15);
+          /* We know that m==4 here because the radix-2 is just after a radix-4  why*/
+          celt_assert(m==4);
+
+
+
+      }
+
+}
+
+
+
 
 #endif /*KISS_FFT_ARMv7E_H*/

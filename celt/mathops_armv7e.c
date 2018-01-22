@@ -81,7 +81,7 @@ void scale16_vect_armv7e(opus_val16 * in, float scale,opus_val16 * out ,opus_val
 	 }
 }
 
-void
+//void
 
 /* FIXME: It is necessary to complete this file*/
 
