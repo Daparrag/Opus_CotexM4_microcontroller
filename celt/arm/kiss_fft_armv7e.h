@@ -31,6 +31,11 @@
 #endif
 
 #include "kiss_fft_armv5e.h"
+#include "_kiss_fft_guts.h"
+#include "arch.h"
+#include "os_support.h"
+#include "mathops.h"
+#include "stack_alloc.h"
 /*Complex Multiplication*/
 void C_MUL32_armv7e(opus_val32 * in_cplxA, opus_val32 * in_cplxB, opus_val32 out_dest, opus_val32 nsamples){
 
@@ -98,8 +103,36 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
           tw = QCONST16(0.7071067812f, 15);
           /* We know that m==4 here because the radix-2 is just after a radix-4  why*/
           celt_assert(m==4);
+          kiss_fft_scalar * OPUS_RESTRICT xp1 = (kiss_fft_scalar *)Fout; 		/*Fout[8i]*/
+          kiss_fft_scalar * OPUS_RESTRICT xp2 = (kiss_fft_scalar *)(Fout+2);	/*Fout[8i+2]*/
+          kiss_fft_scalar * OPUS_RESTRICT xp4 = (kiss_fft_scalar *)(Fout+4);	/*Fout[8i+4]*/
+          kiss_fft_scalar * OPUS_RESTRICT xp6 = (kiss_fft_scalar *)(Fout+6);	/*Fout[8i+6]*/
 
 
+          for(i=0; i<(N>>3);i++){
+        	  *xp1 = *xp1 + *xp4;
+        	  *xp4 = *xp1 - *xp4;
+        	  *xp2 = *xp2 + *(xp6++);
+        	  *xp6 = *xp2 - *(xp6++);
+
+
+        	  *(xp1++) = *(xp1++) + *(xp4++);
+        	  *(xp4++) = *(xp1++) - *( xp4++);
+        	  *(xp2++) =  *(xp2++) - *(xp6);
+        	  *(xp6++) =  *(xp2++) + *(xp6);
+
+        	  xp1 += 8;
+        	  xp2 = xp1+2;
+        	  xp4 = xp1+4;
+        	  xp4 = xp1+6;
+          }
+
+
+          for(;i<(N);i+2){
+
+
+
+          }
 
       }
 
