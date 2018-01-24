@@ -113,27 +113,22 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
 
 
           for(i=0; i<(N>>3);i++){
-        	  *xp1 = *xp1 + *xp4;
-        	  *xp4 = *xp1 - *xp4;
-        	  *xp2 = *xp2 + *(xp6++);
-        	  *xp6 = *xp2 - *(xp6++);
+        	  *xp1 = *xp1 + *xp4;					/* Fout[8i].r = Fout[8i].r + Fout[8i+4].r*/
+        	  *xp4 = *xp1 - *xp4;					/* Fout[8i+4].r = Fout[8i].r - Fout[8i+4].r*/
+        	  *xp2 = *xp2 + *(xp6+1);	 			/* Fout[8i+2].r = Fout[8i+2].r + Fout[8i+6].i*/
+        	  *xp6 = *xp2 - *(xp6+1);				/* Fout[8i+6].r = Fout[8i+2].r - Fout[8i+6].i*/
 
 
-        	  *(xp1++) = *(xp1++) + *(xp4++);
-        	  *(xp4++) = *(xp1++) - *(xp4++);
-        	  *(xp2++) = *(xp2++) - *(xp6);
-        	  *(xp6++) = *(xp2++) + *(xp6);
+        	  *(xp1+1) = *(xp1+1) + *(xp4+1);		/* Fout[8i].i = Fout[8i].i + Fout[8i+4].i*/
+        	  *(xp4+1) = *(xp1+1) - *(xp4+1);		/* Fout[8i+4].i = Fout[8i].i - Fout[8i+4].i*/
+        	  *(xp2+1) = *(xp2+1) - *(xp6);			/* Fout[8i+2].i = Fout[8i+2].i - Fout[8i+6].r*/
+        	  *(xp6+1) = *(xp2+1) + *(xp6);			/* Fout[8i+6].i = Fout[8i+2].i + Fout[8i+6].r*/
 
         	  xp1 += 8;
         	  xp2 = xp1+2;
         	  xp4 = xp1+4;
         	  xp4 = xp1+6;
           }
-
-          //xp1 = (kiss_fft_scalar *)Fout2; 	 /*Fout[8i+1]*/
-          //xp2 = (kiss_fft_scalar *)(Fout2+2);  /*Fout[8i+3]*/
-          //xp4 = (kiss_fft_scalar *)(Fout2+4);  /*Fout[8i+5]*/
-          //xp6 = (kiss_fft_scalar *)(Fout2+6);  /*Fout[8i+7]*/
 
           kiss_fft_scalar acc1, acc2, acc3, acc4,acc5 ;
           kiss_fft_scalar * OPUS_RESTRICT tmpx1;
@@ -178,15 +173,12 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
         	  *tmpx1 = acc5;								 /* Fout[8i+3].r = Fout[8i+3].r + ( (Fout[8i+7].i - Fout[8i+7].r) * tw )*/
         	  *tmpx2 = acc3;								 /*	Fout[8i+3].i = Fout[8i+3].i + (-Fout[8i+7].i - Fout[8i+7].r) * tw */
 
-        	  Fout2 + 8;
+        	  Fout2 += 8;
           }
 
 
       }
 
 }
-
-
-
 
 #endif /*KISS_FFT_ARMv7E_H*/
