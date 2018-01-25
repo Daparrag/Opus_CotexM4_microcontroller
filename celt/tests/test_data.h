@@ -12,4 +12,4 @@ extern "C" {
 extern const opus_int32 real_vector[48000];
 extern const opus_int32 img_vector[48000];
 
-#endif __TEST_DATA_H
+#endif /*__TEST_DATA_H*/

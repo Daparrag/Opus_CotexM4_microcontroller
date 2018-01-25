@@ -51,7 +51,7 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
                      int N)
 {
 
-	kiss_fft_cpx * Fout2;
+	kiss_fft_cpx * Fout2 =(Fout+1);
 	opus_uint32 blkCnt; /*loop unrolling*/
 
    int i;
@@ -60,11 +60,11 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
       if (m==1)
    {
       celt_assert(m==1);
-      blkCnt = N >> 1 u;
+      blkCnt = N >> 1u;
       kiss_fft_scalar acc1, acc2, acc3, acc4;
       kiss_fft_scalar * OPUS_RESTRICT tmp1;
       kiss_fft_scalar * OPUS_RESTRICT tmp2;
-      kiss_fft_scalar * OP    tmp3;
+      kiss_fft_scalar * OPUS_RESTRICT tmp3;
       kiss_fft_scalar * OPUS_RESTRICT tmp4;
       while(blkCnt > 0u){
       	tmp1 = (kiss_fft_scalar *)Fout; 	/*Fout[2i].r*/
@@ -103,23 +103,42 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
           tw = QCONST16(0.7071067812f, 15);
           /* We know that m==4 here because the radix-2 is just after a radix-4  why*/
           celt_assert(m==4);
+
+
+
           kiss_fft_scalar * OPUS_RESTRICT xp1 = (kiss_fft_scalar *)Fout; 		/*Fout[8i]*/
           kiss_fft_scalar * OPUS_RESTRICT xp2 = (kiss_fft_scalar *)(Fout+2);	/*Fout[8i+2]*/
           kiss_fft_scalar * OPUS_RESTRICT xp4 = (kiss_fft_scalar *)(Fout+4);	/*Fout[8i+4]*/
           kiss_fft_scalar * OPUS_RESTRICT xp6 = (kiss_fft_scalar *)(Fout+6);	/*Fout[8i+6]*/
+          
 
 
           for(i=0; i<(N>>3);i++){
-        	  *xp1 = *xp1 + *xp4;
-        	  *xp4 = *xp1 - *xp4;
-        	  *xp2 = *xp2 + *(xp6++);
-        	  *xp6 = *xp2 - *(xp6++);
+            kiss_fft_scalar tmp1, tmp2, tmp3,tmp4;
 
+        	  tmp1 = *xp1 + *xp4;					  /* Fout[8i].r + Fout[8i+4].r*/
+        	  tmp2 = *xp1 - *xp4;					  /* Fout[8i].r - Fout[8i+4].r*/
+            *xp1 = tmp1;                  /* Fout[8i].r = Fout[8i].r + Fout[8i+4].r*/    
+        	  tmp3 = *xp2 + *(xp6+1);	 			/* Fout[8i+2].r + Fout[8i+6].i*/
+            *xp4 = tmp2;                  /* Fout[8i+4].r = Fout[8i].r - Fout[8i+4].r*/
+        	  tmp4 = *xp2 - *(xp6+1);				/* Fout[8i+2].r - Fout[8i+6].i*/
 
-        	  *(xp1++) = *(xp1++) + *(xp4++);
-        	  *(xp4++) = *(xp1++) - *( xp4++);
-        	  *(xp2++) =  *(xp2++) - *(xp6);
-        	  *(xp6++) =  *(xp2++) + *(xp6);
+            *xp2 = tmp3;                  /* Fout[8i+2].r = Fout[8i+2].r + Fout[8i+6].i*/
+            tmp1 = *(xp2+1) - *(xp6);     /* Fout[8i+2].i - Fout[8i+6].r*/
+            tmp2 = *(xp2+1) + *(xp6);     /* Fout[8i+2].i + Fout[8i+6].r*/
+
+            *xp6 = tmp4;                  /*  Fout[8i+6].r = Fout[8i+2].r - Fout[8i+6].i*/
+            tmp3 = *(xp1+1) + *(xp4+1);    /* Fout[8i].i + Fout[8i+4].i*/ 
+
+            *(xp2+1)=tmp1;                /* Fout[8i+2].i = Fout[8i+2].i - Fout[8i+6].r*/
+            tmp4 = *(xp1+1) - *(xp4+1);   /* Fout[8i].i - Fout[8i+4].i*/
+        	  
+
+            *(xp6+1) = tmp2;              /* Fout[8i+6].i = Fout[8i+2].i + Fout[8i+6].r*/
+            *(xp1+1) = tmp3;              /* Fout[8i].i = Fout[8i].i + Fout[8i+4].i*/
+            *(xp4+1) = tmp4;              /* Fout[8i+4].i = Fout[8i].i - Fout[8i+4].i*/
+        	  
+        	  
 
         	  xp1 += 8;
         	  xp2 = xp1+2;
@@ -127,18 +146,55 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
         	  xp4 = xp1+6;
           }
 
+          kiss_fft_scalar acc1, acc2, acc3, acc4,acc5 ;
+          kiss_fft_scalar * OPUS_RESTRICT tmpx1;
+          kiss_fft_scalar * OPUS_RESTRICT tmpx2;
+          kiss_fft_scalar * OPUS_RESTRICT tmpx3;
+          kiss_fft_scalar * OPUS_RESTRICT tmpx4;
+          kiss_fft_scalar * OPUS_RESTRICT tmpx5;
+          kiss_fft_scalar * OPUS_RESTRICT tmpx6;
 
-          for(;i<(N);i+2){
+          for(i=0; i<(N>>3);i++){
 
+        	  tmpx1 = (kiss_fft_scalar *)(Fout2 + 4); 	 	 /* Fout[8i+5].r*/
+        	  tmpx2 = tmpx1 + 1; 					  	 	 /* Fout[8i+5].i*/
+        	  tmpx3 = (kiss_fft_scalar *)(Fout2 + 6); 	 	 /* Fout[8i+7].r*/
+        	  acc1 = *tmpx1 - ((*tmpx1 + *tmpx2) * tw);		 /* Fout[8i+5].r - (Fout[8i+5].r + Fout[8i+5].i) * tw */
 
+        	  tmpx4 = tmpx3 + 1; 	 					 	 /* Fout[8i+7].i */
+        	  acc2 = *tmpx2 - ((*tmpx2 - *tmpx1) * tw);		 /* Fout[8i+5].i - ((Fout[8i+5].i - Fout[8i+5].r) * tw) */
 
+        	  tmpx5 = (kiss_fft_scalar *)(Fout2); 	 	 	 /* Fout[8i+1].r */
+        	  tmpx6 = tmpx5+1; 	 	 	 					 /* Fout[8i+1].i */
+        	  acc3  = *tmpx3 - (*tmpx4 - *tmpx3) *  tw;	 	 /* (Fout[8i+7].r - (Fout[8i+7].i - Fout[8i+7].r) * tw */
+
+        	 *tmpx1 = acc1;									 /*	Fout[8i+5].r = Fout[8i+5].r-(Fout[8i+5].r + Fout[8i+5].i) * tw */
+        	  acc4  = *tmpx4 - ((- *tmpx4 - *tmpx3) *  tw);	 /* (Fout[8i+7].i - (-Fout[8i+7].i - Fout[8i+7].r) * tw */
+
+        	 *tmpx2 = acc2;									 /*	Fout[8i+5].i = Fout[8i+5].i - (Fout[8i+5].r - Fout[8i+5].i) * tw */
+        	  acc1 = *tmpx5 + ((*tmpx1 + *tmpx2) * tw);		 /* Fout[8i+1].r - (Fout[8i+5].r + Fout[8i+5].i) * tw */
+
+        	  tmpx1 = (kiss_fft_scalar *) (Fout2 + 2);     	 /* Fout[8i+3].r */
+        	  tmpx2 = tmpx1 + 1;							 /* Fout[8i+3].i*/
+        	  acc2 = *tmpx6 + ((*tmpx2 - *tmpx1) * tw);		 /* Fout[8i+1].i + (Fout[8i+5].i - Fout[8i+5].r) * tw */
+
+        	  *tmpx3 = acc3;								 /* Fout[8i+7].r = (Fout[8i+7].r - (Fout[8i+7].i - Fout[8i+7].r) * tw  */
+        	  acc5 = *tmpx1 + (*tmpx4 - *tmpx3) *  tw;		 /* Fout[8i+3].r + ( (Fout[8i+7].i - Fout[8i+7].r) * tw ) */
+
+        	  *tmpx4 = acc4;								 /* Fout[8i+7].i = Fout[8i+7].i - (-Fout[8i+7].i - Fout[8i+7].r) * tw*/
+        	   acc3 =  *tmpx2 +((- *tmpx4 - *tmpx3) *  tw);  /* Fout[8i+3].i + (-Fout[8i+7].i - Fout[8i+7].r) * tw*/
+
+        	  *tmpx5 = acc1;								 /*	Fout[8i+1].r = Fout[8i+1].r + (Fout[8i+5].r + Fout[8i+5].i) * tw */
+        	  *tmpx6 = acc2;								 /*	Fout[8i+1].i = Fout[8i+1].i + (Fout[8i+5].i - Fout[8i+5].r) * tw */
+        	  *tmpx1 = acc5;								 /* Fout[8i+3].r = Fout[8i+3].r + ( (Fout[8i+7].i - Fout[8i+7].r) * tw )*/
+        	  *tmpx2 = acc3;								 /*	Fout[8i+3].i = Fout[8i+3].i + (-Fout[8i+7].i - Fout[8i+7].r) * tw */
+
+        	  Fout2 += 8;
           }
+
 
       }
 
 }
-
-
-
 
 #endif /*KISS_FFT_ARMv7E_H*/
