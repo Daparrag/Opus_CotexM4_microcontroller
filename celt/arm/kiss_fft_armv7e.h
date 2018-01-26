@@ -114,7 +114,6 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
 
 
           for(i=0; i<(N>>3);i++){
-<<<<<<< HEAD
             kiss_fft_scalar tmp1, tmp2, tmp3,tmp4;
 
           	  tmp1 = *xp1 + *xp4;					  /* Fout[8i].r + Fout[8i+4].r*/
@@ -173,22 +172,22 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
 
             *tmpx1 = (opus_int32)(*tmpx5 - acc1);                       /* Fout[8i+5].r = Fout[8i+1].r-(Fout[8i+5].r + Fout[8i+5].i) * tw */
             acc4  = S_MUL ((- *tmpx4 - *tmpx3),tw);                     /* (-Fout[8i+7].i - Fout[8i+7].r) * tw */
-=======
+
         	  *xp1 = *xp1 + *xp4;					/* Fout[8i].r = Fout[8i].r + Fout[8i+4].r*/
         	  *xp4 = *xp1 - *xp4;					/* Fout[8i+4].r = Fout[8i].r - Fout[8i+4].r*/
         	  *xp2 = *xp2 + *(xp6+1);	 			/* Fout[8i+2].r = Fout[8i+2].r + Fout[8i+6].i*/
         	  *xp6 = *xp2 - *(xp6+1);				/* Fout[8i+6].r = Fout[8i+2].r - Fout[8i+6].i*/
->>>>>>> branch 'OptimizationMDCT' of https://github.com/Daparrag/Opus_IoT_Microcontrollers.git
 
 
-<<<<<<< HEAD
+
+
             
-=======
+
         	  *(xp1+1) = *(xp1+1) + *(xp4+1);		/* Fout[8i].i = Fout[8i].i + Fout[8i+4].i*/
         	  *(xp4+1) = *(xp1+1) - *(xp4+1);		/* Fout[8i+4].i = Fout[8i].i - Fout[8i+4].i*/
         	  *(xp2+1) = *(xp2+1) - *(xp6);			/* Fout[8i+2].i = Fout[8i+2].i - Fout[8i+6].r*/
         	  *(xp6+1) = *(xp2+1) + *(xp6);			/* Fout[8i+6].i = Fout[8i+2].i + Fout[8i+6].r*/
->>>>>>> branch 'OptimizationMDCT' of https://github.com/Daparrag/Opus_IoT_Microcontrollers.git
+
 
             *tmpx2 = (*tmpx6) - acc2;                                   /* Fout[8i+5].i = Fout[8i+1].i - (Fout[8i+5].r - Fout[8i+5].i) * tw */
             acc5 =  *tmpx5 + acc1;                                      /* Fout[8i+1].r - (Fout[8i+5].r + Fout[8i+5].i) * tw */
@@ -218,8 +217,8 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
           kiss_fft_scalar * OPUS_RESTRICT tmpx5;
           kiss_fft_scalar * OPUS_RESTRICT tmpx6;
 
-<<<<<<< HEAD
-=======
+
+
           for(i=0; i<(N>>3);i++){
 
         	  tmpx1 = (kiss_fft_scalar *)(Fout2 + 4); 	 	 /* Fout[8i+5].r*/
@@ -259,13 +258,9 @@ static void armv7e_kf_bfly2(kiss_fft_cpx * Fout,
           }
 
 
->>>>>>> branch 'OptimizationMDCT' of https://github.com/Daparrag/Opus_IoT_Microcontrollers.git
+
       }
 
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> branch 'OptimizationMDCT' of https://github.com/Daparrag/Opus_IoT_Microcontrollers.git
 #endif /*KISS_FFT_ARMv7E_H*/
