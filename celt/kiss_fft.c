@@ -71,30 +71,31 @@ static void kf_bfly2(
 #endif
    {
       opus_val16 tw;
-      tw = QCONST16(0.7071067812f, 15);
+      tw = QCONST16(0.7071067812f, 15);/*cos(45°)=sin(45°)*/
       /* We know that m==4 here because the radix-2 is just after a radix-4  why*/
+      /*Wn^0 = 1, W^1 = tw * (1-j), W^2 = (0-j), W^3 = -W^1*/
       celt_assert(m==4);
       for (i=0;i<N;i++)
       {
          kiss_fft_cpx t;
          Fout2 = Fout + 4;
          t = Fout2[0];
-         C_SUB( Fout2[0] ,  Fout[0] , t );
-         C_ADDTO( Fout[0] ,  t );
+         C_SUB( Fout2[0] ,  Fout[0] , t );			/*Fout[4].r = (Fout[0].r - Fout[4].r)* Wn^0; Fout[4].i=(Fout[0].i - Fout[4].i)* Wn^0.*/
+         C_ADDTO( Fout[0] ,  t );					/*Fout[0].r = (Fout[0].r + Fout[4].r); Fout[0].i=(Fout[0].i + Fout[4].i)*/
 
          t.r = S_MUL(Fout2[1].r+Fout2[1].i, tw);
          t.i = S_MUL(Fout2[1].i-Fout2[1].r, tw);
-         C_SUB( Fout2[1] ,  Fout[1] , t );
-         C_ADDTO( Fout[1] ,  t );
+         C_SUB( Fout2[1] ,  Fout[1] , t );			/*Fout[5].r = (Fout[1].r - Fout[5].r)* Wn^1 ; Fout[0].i=(Fout[1].i - Fout[4].i)* Wn^1*/
+         C_ADDTO( Fout[1] ,  t );					/*Fout[1].r = (Fout[1].r + Fout[5].r); Fout[1].i=(Fout[1].i + Fout[5].i)*/
 
          t.r = Fout2[2].i;
          t.i = -Fout2[2].r;
-         C_SUB( Fout2[2] ,  Fout[2] , t );
-         C_ADDTO( Fout[2] ,  t );
+         C_SUB( Fout2[2] ,  Fout[2] , t );			/*Fout[6].r = (Fout[2].r - Fout[6].r)* Wn^2; Fout[2].i=(Fout[2].i - Fout[6].i)* Wn^2*/
+         C_ADDTO( Fout[2] ,  t );					/*Fout[2].r = (Fout[2].r + Fout[6].r); Fout[2].i=(Fout[6].i + Fout[6].i)*/
 
          t.r = S_MUL(Fout2[3].i-Fout2[3].r, tw);
-         t.i = S_MUL(-Fout2[3].i-Fout2[3].r, tw);
-         C_SUB( Fout2[3] ,  Fout[3] , t );
+         t.i = S_MUL(-Fout2[3].i-Fout2[3].r, tw);   /*Fout[7].r = (Fout[3].r - Fout[7].r)* Wn^3; Fout[7].i=(Fout[3].i - Fout[7].i)* Wn^3*/
+         C_SUB( Fout2[3] ,  Fout[3] , t );			/*Fout[3].r = (Fout[3].r + Fout[7].r); Fout[3].i=(Fout[3].i + Fout[7].i)*/
          C_ADDTO( Fout[3] ,  t );
          Fout += 8;
       }
